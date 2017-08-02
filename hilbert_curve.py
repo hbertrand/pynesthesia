@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.misc import imread
+from scipy.misc import imread, imresize
+
+from music import write_wav, convert_to_sound
 
 
 def __hilbert(x, y, xi, xj, yi, yj, order):
@@ -22,6 +24,13 @@ def hilbert_curve_2d(order):
     return __hilbert(0, 0, 0, 2 ** order, 2 ** order, 0, order).astype(int)
 
 
+def plot_hilbert_curve_2d(order):
+    hc = hilbert_curve_2d(order)
+
+    plt.plot(hc[:, 0], hc[:, 1])
+    plt.show()
+
+
 def flatten_array(arr):
     assert arr.shape[0] == arr.shape[1]
     order = np.log2(arr.shape[0])
@@ -33,11 +42,18 @@ def flatten_array(arr):
 
 
 if __name__ == '__main__':
-    # hc = hilbert_curve_2d(3)
-    #
-    # plt.plot(hc[:, 0], hc[:, 1])
-    # plt.show()
+    plot_hilbert_curve_2d(4)
 
-    img = imread('lena-64x64.jpg')
+    # filename = 'lena-64x64.jpg'
+    filename = 'liver_dim2-64x64.jpg'
+    filename = 'img/' + filename
+    img = imread(filename)
+    s = 32
+    img = imresize(img, (s, s))
     flat_img = flatten_array(img)
-    print(flat_img)
+    # plot_sound(flat_img)
+    # plot_sound(convert_to_sound(flat_img))
+    wav_file = 'sound' + filename[3:-3] + "wav"
+    write_wav(convert_to_sound(flat_img), wav_file)
+
+    # read_binary(wav_file)
